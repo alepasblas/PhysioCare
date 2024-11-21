@@ -1,0 +1,300 @@
+{
+    "clientName": "Thunder Client",
+    "collectionName": "Tests Api PhysioCare",
+    "collectionId": "5a28a96e-7612-46bd-91ec-95ecda83d7ab",
+    "dateExported": "2024-11-12T17:12:57.451Z",
+    "version": "1.2",
+    "folders": [
+        {
+            "_id": "0bb56d55-3fc2-4ed1-8eea-b3604d3c3ccc",
+            "name": "TestsPatients",
+            "containerId": "",
+            "created": "2024-11-11T22:05:17.023Z",
+            "sortNum": 10000
+        },
+        {
+            "_id": "2ce0a811-1a27-45e8-8e48-e523dc9b3b96",
+            "name": "TestsPhysios",
+            "containerId": "",
+            "created": "2024-11-11T22:06:25.651Z",
+            "sortNum": 20000
+        },
+        {
+            "_id": "b9057213-2162-4447-81f9-7f69b4e2e194",
+            "name": "TestsRecords",
+            "containerId": "",
+            "created": "2024-11-11T22:15:26.945Z",
+            "sortNum": 30000
+        }
+    ],
+    "requests": [
+        {
+            "_id": "8f81b88c-183f-4431-9486-93246be55453",
+            "colId": "5a28a96e-7612-46bd-91ec-95ecda83d7ab",
+            "containerId": "0bb56d55-3fc2-4ed1-8eea-b3604d3c3ccc",
+            "name": "Obtener Todos Los Pacientes",
+            "url": "http://localhost:8080/patients",
+            "method": "GET",
+            "sortNum": 10000,
+            "created": "2024-11-11T22:05:24.736Z",
+            "modified": "2024-11-11T22:05:24.736Z",
+            "headers": []
+        },
+        {
+            "_id": "fd3966e8-479a-4dce-ae5a-f655ca734bd3",
+            "colId": "5a28a96e-7612-46bd-91ec-95ecda83d7ab",
+            "containerId": "0bb56d55-3fc2-4ed1-8eea-b3604d3c3ccc",
+            "name": "Obtener Paciente Especifico",
+            "url": "http://localhost:8080/patients/672d3a8b7ede3d99c0681518",
+            "method": "GET",
+            "sortNum": 20000,
+            "created": "2024-11-11T22:05:26.625Z",
+            "modified": "2024-11-11T22:05:26.625Z",
+            "headers": []
+        },
+        {
+            "_id": "7a1ad11c-1f9e-4893-9739-35aafd7dcf80",
+            "colId": "5a28a96e-7612-46bd-91ec-95ecda83d7ab",
+            "containerId": "0bb56d55-3fc2-4ed1-8eea-b3604d3c3ccc",
+            "name": "Buscar Pacientes Por Apellido",
+            "url": "http://localhost:8080/patients/find?surname=Sanz",
+            "method": "GET",
+            "sortNum": 30000,
+            "created": "2024-11-11T22:05:28.181Z",
+            "modified": "2024-11-11T22:05:28.181Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "surname",
+                    "value": "Sanz",
+                    "isPath": false
+                }
+            ]
+        },
+        {
+            "_id": "1ab51857-e016-44b7-a6d3-9041e2b1ab60",
+            "colId": "5a28a96e-7612-46bd-91ec-95ecda83d7ab",
+            "containerId": "0bb56d55-3fc2-4ed1-8eea-b3604d3c3ccc",
+            "name": "Insertar Paciente",
+            "url": "http://localhost:8080/patients",
+            "method": "POST",
+            "sortNum": 40000,
+            "created": "2024-11-11T22:05:29.749Z",
+            "modified": "2024-11-11T22:05:29.749Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\r\n  \"name\": \"Juan\",\r\n  \"surname\": \"Pastor\",\r\n  \"birthDate\": \"2004-05-20\",\r\n  \"address\": \"Pintor Sorolla 9\", \r\n  \"insuranceNumber\":\"234JUY76T\"\r\n}\r\n",
+                "form": []
+            }
+        },
+        {
+            "_id": "13b61691-4d02-409c-a4be-47c3e674e44a",
+            "colId": "5a28a96e-7612-46bd-91ec-95ecda83d7ab",
+            "containerId": "0bb56d55-3fc2-4ed1-8eea-b3604d3c3ccc",
+            "name": "Actualizar Paciente",
+            "url": "http://localhost:8080/patients/672d3a8b7ede3d99c068151a",
+            "method": "PUT",
+            "sortNum": 50000,
+            "created": "2024-11-11T22:05:31.286Z",
+            "modified": "2024-11-11T22:05:31.286Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"name\": \"Juan Ramón\",\n  \"surname\": \"Garcia\",\n  \"birthDate\": \"2000-12-12\",\n  \"address\": \"Calle Bailén\",\n  \"insuranceNumber\": \"456789123\"\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "5fe0831e-eeb5-40c3-999d-69a2f79b836d",
+            "colId": "5a28a96e-7612-46bd-91ec-95ecda83d7ab",
+            "containerId": "0bb56d55-3fc2-4ed1-8eea-b3604d3c3ccc",
+            "name": "Eliminar Un Paciente",
+            "url": "http://localhost:8080/patients/672d3a8b7ede3d99c068151a",
+            "method": "DELETE",
+            "sortNum": 60000,
+            "created": "2024-11-11T22:05:32.739Z",
+            "modified": "2024-11-11T22:05:32.739Z",
+            "headers": []
+        },
+        {
+            "_id": "6eb0fa3f-73e6-4921-af36-5a2567380464",
+            "colId": "5a28a96e-7612-46bd-91ec-95ecda83d7ab",
+            "containerId": "2ce0a811-1a27-45e8-8e48-e523dc9b3b96",
+            "name": "Obtener Todos Los Physios",
+            "url": "http://localhost:8080/physios",
+            "method": "GET",
+            "sortNum": 70000,
+            "created": "2024-11-11T22:08:32.412Z",
+            "modified": "2024-11-11T22:08:41.742Z",
+            "headers": []
+        },
+        {
+            "_id": "85af6089-7061-4eb8-86ae-8bc654f23504",
+            "colId": "5a28a96e-7612-46bd-91ec-95ecda83d7ab",
+            "containerId": "2ce0a811-1a27-45e8-8e48-e523dc9b3b96",
+            "name": "Buscar Physios Por Especialidad",
+            "url": "http://localhost:8080/physios/find?specialty=Sports",
+            "method": "GET",
+            "sortNum": 80000,
+            "created": "2024-11-11T22:09:26.406Z",
+            "modified": "2024-11-11T22:09:35.765Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "specialty",
+                    "value": "Sports",
+                    "isPath": false
+                }
+            ]
+        },
+        {
+            "_id": "ef7203f5-b41c-4331-a369-198f4a2b5e91",
+            "colId": "5a28a96e-7612-46bd-91ec-95ecda83d7ab",
+            "containerId": "2ce0a811-1a27-45e8-8e48-e523dc9b3b96",
+            "name": "Obtener Detalles De Un Physio Concreto",
+            "url": "http://localhost:8080/physios/672d3a8b7ede3d99c0681521",
+            "method": "GET",
+            "sortNum": 85000,
+            "created": "2024-11-11T22:12:46.579Z",
+            "modified": "2024-11-11T22:13:14.438Z",
+            "headers": []
+        },
+        {
+            "_id": "2741fee3-5d66-4793-b630-da7f654161bf",
+            "colId": "5a28a96e-7612-46bd-91ec-95ecda83d7ab",
+            "containerId": "2ce0a811-1a27-45e8-8e48-e523dc9b3b96",
+            "name": "Insertar Physio",
+            "url": "http://localhost:8080/physios",
+            "method": "POST",
+            "sortNum": 90000,
+            "created": "2024-11-11T22:09:53.501Z",
+            "modified": "2024-11-11T22:11:54.843Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\r\n  \"name\": \"Alejandro\",\r\n  \"surname\": \"Ramírez\",\r\n  \"specialty\": \"Sports\",\r\n  \"licenseNumber\": \"R7554303\"\r\n}\r\n",
+                "form": []
+            }
+        },
+        {
+            "_id": "e015747a-a269-4892-9699-b74b6c3accf4",
+            "colId": "5a28a96e-7612-46bd-91ec-95ecda83d7ab",
+            "containerId": "2ce0a811-1a27-45e8-8e48-e523dc9b3b96",
+            "name": "Actualizar Physio",
+            "url": "http://localhost:8080/physios/672d3a8b7ede3d99c0681521",
+            "method": "PUT",
+            "sortNum": 110000,
+            "created": "2024-11-11T22:13:46.221Z",
+            "modified": "2024-11-11T22:14:35.058Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\r\n  \"name\": \"Juanito\",\r\n  \"surname\": \"Palote\",\r\n  \"specialty\": \"Pediatric\",\r\n  \"licenseNumber\": \"Q7344303\"\r\n}\r\n",
+                "form": []
+            }
+        },
+        {
+            "_id": "c141647a-9e8d-4cae-a472-d043523e74a0",
+            "colId": "5a28a96e-7612-46bd-91ec-95ecda83d7ab",
+            "containerId": "2ce0a811-1a27-45e8-8e48-e523dc9b3b96",
+            "name": "Eliminar Physio",
+            "url": "http://localhost:8080/physios/672d3a8b7ede3d99c0681521",
+            "method": "DELETE",
+            "sortNum": 120000,
+            "created": "2024-11-11T22:14:59.348Z",
+            "modified": "2024-11-11T22:15:06.803Z",
+            "headers": []
+        },
+        {
+            "_id": "b10aed05-029e-4f7a-aceb-442e5e54fdca",
+            "colId": "5a28a96e-7612-46bd-91ec-95ecda83d7ab",
+            "containerId": "b9057213-2162-4447-81f9-7f69b4e2e194",
+            "name": "Obtener Todos Los Records",
+            "url": "http://localhost:8080/records",
+            "method": "GET",
+            "sortNum": 130000,
+            "created": "2024-11-11T22:15:43.893Z",
+            "modified": "2024-11-11T22:15:53.048Z",
+            "headers": []
+        },
+        {
+            "_id": "96106688-f346-46da-a941-764fef1ca2c6",
+            "colId": "5a28a96e-7612-46bd-91ec-95ecda83d7ab",
+            "containerId": "b9057213-2162-4447-81f9-7f69b4e2e194",
+            "name": "Buscar Record Por Apellido Del Patient",
+            "url": "http://localhost:8080/records/find?surname=Pérez",
+            "method": "GET",
+            "sortNum": 140000,
+            "created": "2024-11-11T22:16:27.959Z",
+            "modified": "2024-11-11T22:19:20.641Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "surname",
+                    "value": "Pérez",
+                    "isPath": false
+                }
+            ]
+        },
+        {
+            "_id": "d3a200ae-ee74-42bf-91d6-44f57c1f5574",
+            "colId": "5a28a96e-7612-46bd-91ec-95ecda83d7ab",
+            "containerId": "b9057213-2162-4447-81f9-7f69b4e2e194",
+            "name": "Obtener Detalles De Record Concreto",
+            "url": "http://localhost:8080/records/672d3a8b7ede3d99c0681533",
+            "method": "GET",
+            "sortNum": 150000,
+            "created": "2024-11-11T22:19:53.828Z",
+            "modified": "2024-11-11T22:20:18.643Z",
+            "headers": []
+        },
+        {
+            "_id": "d636216c-bc92-4fa9-8ade-582bbbeeb729",
+            "colId": "5a28a96e-7612-46bd-91ec-95ecda83d7ab",
+            "containerId": "b9057213-2162-4447-81f9-7f69b4e2e194",
+            "name": "Insertar Record",
+            "url": "http://localhost:8080/records",
+            "method": "POST",
+            "sortNum": 160000,
+            "created": "2024-11-11T22:21:05.242Z",
+            "modified": "2024-11-11T22:22:22.905Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"patient\": \"6731035212ed23da1b89ef46\",\n  \"medicalRecord\": \"Paciente con dolor de piernas.\"\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "c06aab9c-5f2b-4712-8efb-887992cbc773",
+            "colId": "5a28a96e-7612-46bd-91ec-95ecda83d7ab",
+            "containerId": "b9057213-2162-4447-81f9-7f69b4e2e194",
+            "name": "Añadir Consultas A Record",
+            "url": "http://localhost:8080/records/6732839ebd606822f43ec6e3/appointments",
+            "method": "POST",
+            "sortNum": 170000,
+            "created": "2024-11-11T22:22:45.809Z",
+            "modified": "2024-11-11T22:24:50.004Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"date\": \"2024-12-22T00:00:00Z\",\n  \"physio\": \"672d3a8b7ede3d99c0681523\",\n  \"diagnosis\": \"Pierna rota\",\n  \"treatment\": \"Vendaje y descanso\",\n  \"observations\": \"Se recomienda evitar toda actividad por 12 semanas\"\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "0c4dd9d2-d23e-40c7-9df8-950b34318f22",
+            "colId": "5a28a96e-7612-46bd-91ec-95ecda83d7ab",
+            "containerId": "b9057213-2162-4447-81f9-7f69b4e2e194",
+            "name": "Eliminar Record",
+            "url": "http://localhost:8080/records/6732839ebd606822f43ec6e3",
+            "method": "DELETE",
+            "sortNum": 180000,
+            "created": "2024-11-11T22:25:11.868Z",
+            "modified": "2024-11-11T22:25:31.166Z",
+            "headers": []
+        }
+    ],
+    "ref": "aNaepnLyvDNzRw3-FYZm9Jcr-5ZHNeAtI0Mw75vjMZb_8IxoGRiR3XlGxttAS956CkpFQ4KqtcXs-TzexkmjVA"
+}

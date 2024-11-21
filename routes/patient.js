@@ -2,6 +2,9 @@ const express = require("express");
 const router = express.Router();
 const Patient = require("../models/patient");
 
+const auth = require(__dirname + '/../auth/auth.js');
+
+
 const getAllPatients = async () => {
   try {
     const patients = await Patient.find();
@@ -12,7 +15,7 @@ const getAllPatients = async () => {
   }
 };
 
-router.get("/", async (req, res) => {
+router.get("/", auth.protegerRuta(['admin', 'physio']), async (req, res) => {
   try {
     const resultados = await getAllPatients();
     if (resultados.length === 0) {
@@ -25,7 +28,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/find", async (req, res) => {
+router.get("/find", auth.protegerRuta(['admin', 'physio' ]), async (req, res) => {
   try {
     const resultados = await getAllPatients();
     const { surname } = req.query;
@@ -40,16 +43,17 @@ router.get("/find", async (req, res) => {
         .send({ error: "No se encontraron pacientes que coincidan" });
     }
 
-    res.status(200).send({ resultados: pacientesFiltrados });
+    res.status(200).send({ result: pacientesFiltrados });
   } catch (error) {
     console.error("Error interno del servidor:", error.message);
     res.status(500).send({ error: "Error interno del servidor" });
   }
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", auth.protegerRuta(['admin', 'physio', 'patient']), async (req, res) => {
   try {
     const idPaciente = req.params.id;
+    console.log(idPaciente);
 
     const resultados = await getAllPatients();
 
@@ -62,6 +66,19 @@ router.get("/:id", async (req, res) => {
     if (!paciente) {
       return res.status(404).send({ error: "Paciente no encontrado" });
     }
+    console.log(req.usuario);
+    const rol = req.usuario.rol;
+    const userId = req.usuario.id;
+
+    console.log(rol+" , "+userId);
+
+    if (rol === "patient" && idPaciente !== userId) {
+      return res.status(403).send({
+        error:"Paciente no autorizado"
+      })
+    }
+
+    
 
     res.status(200).send({ result: paciente });
   } catch (error) {
@@ -70,7 +87,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", auth.protegerRuta(['admin', 'physio' ]), async (req, res) => {
   try {
     const { name, surname, birthDate, address, insuranceNumber } = req.body;
 
@@ -88,17 +105,17 @@ router.post("/", async (req, res) => {
       insuranceNumber,
     });
 
-    await newPatient.save();
+    const savedPatient=await newPatient.save();
     res
       .status(201)
-      .send({ result: "Paciente insertado exitosamente", patient: newPatient });
-  } catch (error) {
+      .send({ result: savedPatient});
+  } catch (error) { 
     console.error(error);
     res.status(400).send({ error: "Error al insertar el paciente" });
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth.protegerRuta(['admin', 'physio' ]), async (req, res) => {
   try {
     const userId = req.params.id;
 
@@ -120,14 +137,13 @@ router.put("/:id", async (req, res) => {
 
     if (!result) {
       res.status(400).send({
-        message: "No se ha podido actializar el paciente",
         error: "Error actualizando el contacto",
       });
     }
 
     res.status(200).send({
-      message: "Paciente actializado exitosamente",
-      resultado: result,
+      status:200,
+      result: result,
     });
   } catch (error) {
     console.error(error);
@@ -135,7 +151,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth.protegerRuta(['admin', 'physio' ]), async (req, res) => {
   try {
     const userId = req.params.id;
 
@@ -143,14 +159,13 @@ router.delete("/:id", async (req, res) => {
 
     if (!result) {
       res.status(400).send({
-        message: "No se ha podido eliminar el paciente",
         error: "Error eliminando contacto",
       });
     }
 
     res
       .status(200)
-      .send({ message: "Paciente eliminado exitosamente", resultado: result });
+      .send({ result: result });
   } catch (error) {
     console.error(error);
     res.status(500).send({ error: "Error interno del servidor" });

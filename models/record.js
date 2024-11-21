@@ -29,7 +29,7 @@ const consSchema = new mongoose.Schema({
 let recordSchema = new mongoose.Schema({
     patient: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'patient'
+        ref: 'patients'
     },
     medicalRecord: {
         type: String,

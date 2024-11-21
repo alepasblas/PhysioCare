@@ -4,13 +4,13 @@ let physioSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
-        maxlength: 2,
+        minlength: 2,
         maxlength: 50,
     },
     surname: {
         type: String,
         required: true,
-        maxlength: 2,
+        minlength: 2,
         maxlength: 50,
     },
     specialty: {
