@@ -1,0 +1,311 @@
+{
+	"info": {
+		"_postman_id": "abe786f8-bbbe-47dd-b23a-a0ce4496cfa2",
+		"name": "Tests Api PhysioCare",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "39886738"
+	},
+	"item": [
+		{
+			"name": "TestsPatients",
+			"item": [
+				{
+					"name": "Obtener Todos Los Pacientes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8080/patients"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Paciente Especifico",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6ImZpc2lvMiIsImlhdCI6MTczMjAyMTM4NCwiZXhwIjoxNzMyMDI4NTg0fQ.1JZ8ghluCuXrkapDs_eayOX0Ieu3JGAZv8rLL3UjWHE"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8080/patients/672d3a8b7ede3d99c0681518"
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Pacientes Por Apellido",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/patients/find?surname=Sanz",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"patients",
+								"find"
+							],
+							"query": [
+								{
+									"key": "surname",
+									"value": "Sanz"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Insertar Paciente",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Juan\",\r\n  \"surname\": \"Pastor\",\r\n  \"birthDate\": \"2004-05-20\",\r\n  \"address\": \"Pintor Sorolla 9\", \r\n  \"insuranceNumber\":\"234JUY76T\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/patients"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Paciente",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Juan Ramón\",\n  \"surname\": \"Garcia\",\n  \"birthDate\": \"2000-12-12\",\n  \"address\": \"Calle Bailén\",\n  \"insuranceNumber\": \"456789123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/patients/672d3a8b7ede3d99c068151a"
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Un Paciente",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:8080/patients/672d3a8b7ede3d99c068151a"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TestsPhysios",
+			"item": [
+				{
+					"name": "Obtener Todos Los Physios",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8080/physios"
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Physios Por Especialidad",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/physios/find?specialty=Sports",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"physios",
+								"find"
+							],
+							"query": [
+								{
+									"key": "specialty",
+									"value": "Sports"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Insertar Physio",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Alejandro\",\r\n  \"surname\": \"Ramírez\",\r\n  \"specialty\": \"Sports\",\r\n  \"licenseNumber\": \"R7554303\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/physios"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Detalles De Un Physio Concreto",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8080/physios/672d3a8b7ede3d99c0681521"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Physio",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Juanito\",\r\n  \"surname\": \"Palote\",\r\n  \"specialty\": \"Pediatric\",\r\n  \"licenseNumber\": \"Q7344303\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/physios/672d3a8b7ede3d99c0681521"
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Physio",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:8080/physios/672d3a8b7ede3d99c0681521"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TestsRecords",
+			"item": [
+				{
+					"name": "Obtener Todos Los Records",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8080/records"
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Record Por Apellido Del Patient",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/records/find?surname=López",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"records",
+								"find"
+							],
+							"query": [
+								{
+									"key": "surname",
+									"value": "López"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Detalles De Record Concreto",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8080/records/672d3a8b7ede3d99c0681519"
+					},
+					"response": []
+				},
+				{
+					"name": "Insertar Record",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"patient\": \"6731035212ed23da1b89ef46\",\n  \"medicalRecord\": \"Paciente con dolor de piernas.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/records"
+					},
+					"response": []
+				},
+				{
+					"name": "Añadir Consultas A Record",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"date\": \"2024-12-22T00:00:00Z\",\n  \"physio\": \"672d3a8b7ede3d99c0681523\",\n  \"diagnosis\": \"Pierna rota\",\n  \"treatment\": \"Vendaje y descanso\",\n  \"observations\": \"Se recomienda evitar toda actividad por 12 semanas\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/records/6732839ebd606822f43ec6e3/appointments"
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Record",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:8080/records/6732839ebd606822f43ec6e3"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TestsUser",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

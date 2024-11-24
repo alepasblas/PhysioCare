@@ -64,7 +64,6 @@ router.get("/find", auth.protegerRuta(['admin', 'physio']), async (req, res) => 
 router.get("/:id", auth.protegerRuta(['admin', 'physio', 'patients']), async (req, res) => {
   try {
     const id = req.params.id;
-    console.log(id);
 
     const resultados = await getAllRecords();
 
@@ -72,10 +71,10 @@ router.get("/:id", auth.protegerRuta(['admin', 'physio', 'patients']), async (re
       return res.status(404).send({ error: "No hay records registrados" });
     }
 
-    const record = resultados.find((element) => element.patient == id);
+    const record = resultados.find((element) => element._id == id);
 
     if (!record) {
-      return res.status(404).send({ error: "Physio no encontrado" });
+      return res.status(404).send({ error: "Record no encontrado" });
     }
 
     const rol = req.usuario.rol;
