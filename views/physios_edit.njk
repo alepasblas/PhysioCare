@@ -1,0 +1,48 @@
+{% extends "base.njk" %}
+
+{% block titulo %}Physio | Editar{% endblock %}
+
+{% block contenido %}
+
+    <div class="container mt-5">
+        <h1>Editar fisio</h1>
+        <form action="/physios/{{result._id}}" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="_method" value="put" />
+
+            <div class="mb-3">
+                <label for="name" class="form-label">Nombre</label>
+                <input type="text" id="name" name="name" class="form-control" required="required" minlength="2" maxlength="50" value="{{result.name}}">
+            </div>
+
+            <div class="mb-3">
+                <label for="surname" class="form-label">Apellido</label>
+                <input type="text" id="surname" name="surname" class="form-control" required="required" minlength="2" maxlength="50" value="{{result.surname}}">
+            </div>
+
+            <div class="mb-3">
+                <label for="specialty" class="form-label">Especialidad</label>
+                <select id="specialty" name="specialty" class="form-control" required="required">
+                    <option value="" disabled="disabled" selected="selected">Seleccione una especialidad</option>
+                    <option value="Sports">Deportiva</option>
+                    <option value="Neurological" >Neurológica</option>
+                    <option value="Pediatric" >Pediátrica</option>
+                    <option value="Geriatric" >Geriátrica</option>
+                    <option value="Oncological">Oncológica</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="licenseNumber" class="form-label">Número de Licencia</label>
+                <input type="text" id="licenseNumber" name="licenseNumber" class="form-control" required="required" pattern="[a-zA-Z0-9]{8}" value="{{result.licenseNumber}}">
+            </div>
+
+            <div class="mb-3">
+                <label for="image" class="form-label">Imagen</label>
+                <input type="file" id="image" name="image" class="form-control" accept="image/*">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Registrar</button>
+        </form>
+    </div>
+
+{% endblock %}

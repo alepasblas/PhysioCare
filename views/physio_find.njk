@@ -1,0 +1,39 @@
+{% extends "base.njk" %}
+
+{% block titulo %}Physios | Listado{% endblock %}
+
+{% block contenido %}
+    <form class="d-flex mb-0" action="/physios/find" method="GET">
+
+        <input class="form-control me-2" type="text" name="specialty" placeholder="Search">
+        <button type="submit" class="btn btn-dark">Buscar</button>
+
+    </form>
+    <br>
+    <table width="100%">
+
+        {% for physio in result %}
+            <tr>
+
+                <td >{{ physio.name }}</td>
+
+                <td>
+                    <a class="btn btn-success" href="/physios/{{ physio.id }}">Ver ficha</a>
+                    <a class="btn btn-warning" href="/physios/{{ physio.id }}/edit">Editar</a>
+
+                    <form action="/patients/{{ patient.id }}" method="post" style="display: inline-block;">
+                        <input type="hidden" name="_method" value="delete">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que deseas borrar este physio?')">
+                            Borrar
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">No hay physios que mostrar.</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    {%endblock%}

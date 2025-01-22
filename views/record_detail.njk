@@ -1,0 +1,47 @@
+{% extends "base.njk" %}
+
+{% block titulo %}Record | Ficha{% endblock %}
+
+{% block contenido %}
+
+    <h1>Ficha de expediente</h1>
+    <div>
+        <p>
+            <strong>Patient:</strong>
+            {{ record.patient.name }}
+        </p>
+        <p>
+            <strong>Medical Record:</strong>
+            {{ record.medicalRecord }}
+        </p>
+    </div>
+
+    <h2>Appointments</h2>
+    {% if record.appointments and record.appointments.length > 0 %}
+        <table width="100%">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Physio</th>
+                    <th>Diagnosis</th>
+                    <th>Treatment</th>
+                    <th>Observations</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appointment in record.appointments %}
+                    <tr>
+                        <td>{{ appointment.date | date("YYYY-MM-DD") }}</td>
+                        <td>{{ appointment.physio.name }}</td>
+                        <td>{{ appointment.diagnosis }}</td>
+                        <td>{{ appointment.treatment }}</td>
+                        <td>{{ appointment.observations }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No consultations registered.</p>
+    {% endif %}
+
+{% endblock %}

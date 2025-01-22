@@ -1,0 +1,42 @@
+{% extends "base.njk" %}
+
+{% block titulo %}Expedientes médicos | Listado{% endblock %}
+
+{% block contenido %}
+
+    <h1>Listado de expedientes médicos</h1>
+
+    <table width="100%">
+        <a class="btn btn-primary" href="/record/{{ record.id }}/add-appointment">Add appointment</a>
+
+        <thead>
+            <tr>
+                <th>Id del paciente</th>
+                <th>Expediente medico</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in result %}
+                <tr>
+                    <td>{{ record.patient }}</td>
+                    <td>{{ record.medicalRecord }}</td>
+                    <td>
+                        <a class="btn btn-info" href="/record/{{ record.id }}">View details</a>
+                        <form action="/record/{{ record.id }}" method="post" style="display: inline-block;">
+                            <input type="hidden" name="_method" value="delete">
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que deseas borrar este expediente médico?')">
+                                Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="2">No hay expedientes médicos registrados.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

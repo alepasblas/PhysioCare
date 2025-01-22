@@ -28,6 +28,9 @@ let patientSchema = new mongoose.Schema({
         unique: true,
         match: /^[a-zA-Z0-9]{9}$/,
 
+    }, 
+    image: {
+        type: String,
     }
 });
 

@@ -1,0 +1,44 @@
+{% extends "base.njk" %}
+
+{% block titulo %}Record | Ficha{% endblock %}
+
+{% block contenido %}
+    <div class="container mt-5">
+        <h1>Registrar Nuevo Expediente Médico</h1>
+        <form action="/records" method="POST" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="patient" class="form-label">Paciente</label>
+                <select id="patient" name="patient" class="form-select" required="required">
+                    {% for patient in patients %}
+                        <option value="{{ patient._id }}">{{ patient.name }}
+                            {{ patient.surname }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="medicalRecord" class="form-label">Historial Médico</label>
+                <textarea id="medicalRecord" name="medicalRecord" class="form-control" maxlength="1000" placeholder="Ingrese información del historial médico del paciente"></textarea>
+            </div>
+
+
+            <h5>Cita Médica</h5>
+            <div class="appointment-item mb-3">
+                <label for="appointment[date]" class="form-label">Fecha</label>
+                <input type="date" id="appointment[date]" name="appointment[date]" class="form-control" required="required">
+
+                <label for="appointment[diagnosis]" class="form-label">Diagnóstico</label>
+                <textarea id="appointment[diagnosis]" name="appointment[diagnosis]" class="form-control" minlength="10" maxlength="500" required="required"></textarea>
+
+                <label for="appointment[treatment]" class="form-label">Tratamiento</label>
+                <textarea id="appointment[treatment]" name="appointment[treatment]" class="form-control" required="required"></textarea>
+
+                <label for="appointment[observations]" class="form-label">Observaciones</label>
+                <textarea id="appointment[observations]" name="appointment[observations]" class="form-control" maxlength="500"></textarea>
+            </div>tarea id="appointments[0][observations]" name="appointments[0][observations]" class="form-control" maxlength="500"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Registrar</button>
+</form>
+</div>
+{% endblock %}

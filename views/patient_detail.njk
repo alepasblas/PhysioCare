@@ -1,0 +1,28 @@
+{% extends "base.njk" %}
+
+{% block titulo %}Patient | Ficha{% endblock %}
+
+{% block contenido %}
+
+    <h1>Ficha de paciente</h1>
+    <div>
+        <p>
+            <strong>Name:</strong>
+            {{ result.name }}</p>
+        <p>
+            <strong>Surname:</strong>
+            {{  result.surname }}</p>
+        <p>
+            <strong>Birthdate:</strong>
+            {{  result.birthDate }}</p>
+        <p>
+            <strong>Address:</strong>
+            {{  result.address }}</p>
+        <p>
+            <strong>Insurance Number:</strong>
+            {{  result.insuranceNumber }}</p>
+
+    </div>
+    <a class="btn btn-warning" href="/patients/{{ result._id }}/edit">Editar</a>
+
+{% endblock %}

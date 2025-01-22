@@ -1,9 +1,10 @@
 const express = require("express");
+
+const upload = require(__dirname + '/../utils/uploads.js');
+
 const router = express.Router();
 const Physios = require("../models/physio");
-
-const auth = require(__dirname + '/../auth/auth.js');
-
+const User = require("../models/user"); 
 
 const getAllPhysios = async () => {
   try {
@@ -15,73 +16,70 @@ const getAllPhysios = async () => {
   }
 };
 
-router.get("/", auth.protegerRuta(['admin', 'physio', 'patient' ]), async (req, res) => {
-  try {
-    const resultados = await getAllPhysios();
-    if (resultados.length === 0) {
-      return res.status(404).send({ error: "No hay physios registrados" });
-    }
-    res.status(200).send({ result: resultados });
+router.get("/new", async (req, res) => {
+  try{
+    res.status(200).render("physio_add", { title: "Añadir physio" });
   } catch (error) {
     console.error(error);
-    res.status(500).send({ error: "Error interno del servidor" });
+    res.status(500).render("error", { title: "Error", error: "Error interno del servidor" });
   }
 });
 
-router.get("/find", auth.protegerRuta(['admin', 'physio', 'patient' ]), async (req, res) => {
+router.get("/", async (req, res) => {
+  try {
+    const resultados = await getAllPhysios();
+    if (resultados.length === 0) {
+      return res.status(404).render("error", { title: "Error", error: "No hay physios registrados" });
+    }
+    res.status(200).render("physios_list", { title: "Listado de Fisioterapeutas", result: resultados });
+  } catch (error) {
+    console.error(error);
+    res.status(500).render("error", { title: "Error", error: "Error interno del servidor" });
+  }
+});
+
+router.get("/find", async (req, res) => {
   try {
     const { specialty } = req.query;
 
-    const resultados = await getAllPhysios();
-
-    const fisiosFiltrados = specialty
-      ? resultados.filter((element) => element.specialty===specialty)
-      : resultados;
+    const query = specialty ? { specialty } : {};
+    const fisiosFiltrados = await Physios.find(query);
 
     if (fisiosFiltrados.length === 0) {
-      return res
-        .status(404)
-        .send({ error: "No se encontraron fisios que coincidan" });
+      return res.status(404).render("error", { title: "Error", error: "No se encontraron fisioterapeutas que coincidan" });
     }
 
-    res.status(200).send({ result: fisiosFiltrados });
+    res.status(200).render("physio_find", { title: "Fisioterapeutas Filtrados", result: fisiosFiltrados });
   } catch (error) {
     console.error("Error interno del servidor:", error.message);
-    res.status(500).send({ error: "Error interno del servidor" });
+    res.status(500).render("error", { title: "Error", error: "Error interno del servidor" });
   }
 });
 
-router.get("/:id", auth.protegerRuta(['admin', 'physio', 'patient' ]), async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const id = req.params.id;
-
-    const resultados = await getAllPhysios();
-
-    if (resultados.length === 0) {
-      return res.status(404).send({ error: "No hay physios registrados" });
-    }
-
-    const physio = resultados.find((element) => element._id == id);
+    const physio = await Physios.findById(id);
 
     if (!physio) {
-      return res.status(404).send({ error: "Physio no encontrado" });
+      return res.status(404).render("error", { title: "Error", error: "Fisioterapeuta no encontrado" });
     }
 
-    res.status(200).send({ result: physio });
+    res.status(200).render("physio_detail", { title: `Detalles de ${physio.name}`, result: physio });
   } catch (error) {
     console.error(error);
-    res.status(500).send({ error: "Error interno del servidor" });
+    res.status(500).render("error", { title: "Error", error: "Error interno del servidor" });
   }
 });
 
-router.post("/", auth.protegerRuta(['admin']), async (req, res) => {
+router.post("/",upload.upload.single('image'), async (req, res) => {
   try {
-    const { name, surname, specialty, licenseNumber } = req.body;
+    const { name, surname, specialty, licenseNumber, login, password } = req.body;
+
+    console.log(req.body); // Verificar qué datos se envían
 
     if (!name || !surname || !specialty || !licenseNumber) {
-      return res.status(400).send({
-        error: "Todos los campos básicos del physio son requeridos",
-      });
+      return res.status(400).render("error", { title: "Error", error: "Todos los campos básicos del fisioterapeuta son requeridos" });
     }
 
     const newPhysio = new Physios({
@@ -92,16 +90,48 @@ router.post("/", auth.protegerRuta(['admin']), async (req, res) => {
     });
 
     const savedPhysio = await newPhysio.save();
-    res
-      .status(201)
-      .send({ result: savedPhysio});
+
+    const newUser = new User({
+      login: login,
+      password: password,
+      rol: "physio",
+    });
+
+    const savedUser = await newUser.save();
+
+    savedUser._id = savedPhysio._id;
+
+    res.status(201).render("physios_list", { title: "Fisioterapeuta Registrado", result: savedPhysio });
   } catch (error) {
     console.error(error);
-    res.status(400).send({ error: "Error al insertar el physio" });
+    res.status(400).render("error", { title: "Error", error: "Error al insertar el fisioterapeuta" });
   }
 });
 
-router.put("/:id", auth.protegerRuta(['admin']), async (req, res) => {
+
+router.get("/:id/edit", async (req, res) => {
+  try {
+    const idPhysio = req.params.id;
+
+
+    const physio = await Physios.findById(idPhysio);
+
+    if (!physio) {
+      return res.status(404).render("error", { title: "Error", error: "Fisio no encontrado" });
+    }
+
+    console.log(req.usuario);
+
+
+    res.status(200).render("physios_edit", { result: physio });
+  } catch (error) {
+    console.error(error);
+    res.status(500).render("error", { title: "Error", error: "Error interno del servidor" });
+  }
+});
+
+
+router.post("/:id", async (req, res) => {
   try {
     const userId = req.params.id;
     console.log("ID recibido:", req.params.id);
@@ -118,42 +148,34 @@ router.put("/:id", auth.protegerRuta(['admin']), async (req, res) => {
           licenseNumber: licenseNumber
         },
       },
-      { new: true }
+      { new: true, runValidators: true }
     );
 
     if (!result) {
-      res.status(400).send({
-        error: "Error actualizando el contacto",
-      });
+      return res.status(400).render("error", { title: "Error", error: "Error actualizando el fisioterapeuta" });
     }
 
-    res.status(200).send({
-      result: result,
-    });
+    res.status(200).render("physios_list", { title: "Fisioterapeuta Actualizado", result });
   } catch (error) {
     console.error(error);
-    res.status(500).send({ error: "Error interno del servidor" });
+    res.status(500).render("error", { title: "Error", error: "Error interno del servidor" });
   }
 });
 
-router.delete("/:id", auth.protegerRuta(['admin']), async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     const userId = req.params.id;
 
     const result = await Physios.findByIdAndDelete(userId);
 
     if (!result) {
-      res.status(400).send({
-        error: "Error eliminando contacto",
-      });
+      return res.status(404).render("error", { title: "Error", error: "Error eliminando el fisioterapeuta" });
     }
 
-    res
-      .status(200)
-      .send({ result: result });
+    res.status(200).render("phyios_list", { title: "Fisioterapeuta Eliminado", result:result  });
   } catch (error) {
     console.error(error);
-    res.status(500).send({ error: "Error interno del servidor" });
+    res.status(500).render("error", { title: "Error", error: "Error interno del servidor" });
   }
 });
 

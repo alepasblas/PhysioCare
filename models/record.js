@@ -7,7 +7,7 @@ const consSchema = new mongoose.Schema({
     },
     physio:{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'physio',
+        ref: 'physios',
         required: true,
     },
     diagnosis:{

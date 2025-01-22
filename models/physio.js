@@ -24,6 +24,9 @@ let physioSchema = new mongoose.Schema({
         unique: true,
         match: /^[a-zA-Z0-9]{8}$/,
 
+    },
+    image: {
+        type: String,
     }
 });
 

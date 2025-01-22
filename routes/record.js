@@ -3,9 +3,6 @@ const router = express.Router();
 const Records = require("../models/record");
 const Patient = require("../models/patient");
 
-const auth = require(__dirname + '/../auth/auth.js');
-
-
 const getAllRecords = async () => {
   try {
     const records = await Records.find();
@@ -16,90 +13,139 @@ const getAllRecords = async () => {
   }
 };
 
-router.get("/", auth.protegerRuta(['admin', 'physio']), async (req, res) => {
+router.get('/new', async (req, res) => {
+  const patients = await Patient.find().select('_id name surname'); 
+  res.render('record_add', { patients });
+});
+
+// router.post('/new', async (req, res) => {
+//   try {
+//       const { patient, medicalRecord, appointment} = req.body;
+
+//       const newRecord = new Record({
+//           patient,
+//           medicalRecord,
+//           appointments: [
+//             {
+//                 date: appointment.date,
+//                 diagnosis: appointment.diagnosis,
+//                 treatment: appointment.treatment,
+//                 observations: appointment.observations,
+//             },
+//         ],
+//       });
+
+//       await newRecord.save();
+//       res.redirect('/records');
+//   } catch (error) {
+//       console.error(error);
+//       res.status(500).send('Error al registrar el expediente médico');
+//   }
+// });
+
+router.get("/", async (req, res) => {
   try {
     const resultados = await getAllRecords();
     if (resultados.length === 0) {
-      return res.status(404).send({ error: "No hay records registrados" });
+      return res.status(404).render("error", {
+        title: "Error",
+        error: "No hay registros registrados",
+      });
     }
-    res.status(200).send({ result: resultados });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send({ error: "Error interno del servidor" });
-  }
-});
-
-router.get("/find", auth.protegerRuta(['admin', 'physio']), async (req, res) => {
-  const { surname } = req.query;
-  try {
-    const patientIds = await Patient.find({ surname }).select("_id");
-
-    if (patientIds.length === 0) {
-      return res
-        .status(404)
-        .send({ error: "No hay pacientes con ese apellido" });
-    }
-
-    const recordsFinal = await Records.find({
-      patient: { $in: patientIds },
-    }).populate("patient");
-
-    if (recordsFinal.length === 0) {
-      return res
-        .status(404)
-        .send({ error: "No se encuentra ningun expediente" });
-    }
-
-    res.status(200).send({
-      result: recordsFinal,
+    res.status(200).render("records_list", {
+      title: "Listado de Registros",
+      result: resultados,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).send({
+    res.status(500).render("error", {
+      title: "Error",
       error: "Error interno del servidor",
     });
   }
 });
 
-router.get("/:id", auth.protegerRuta(['admin', 'physio', 'patients']), async (req, res) => {
+router.get("/find", async (req, res) => {
+  const { surname } = req.query;
   try {
-    const id = req.params.id;
+    const patientIds = await Patient.find({ surname }).select("_id");
 
-    const resultados = await getAllRecords();
-
-    if (resultados.length === 0) {
-      return res.status(404).send({ error: "No hay records registrados" });
+    if (patientIds.length === 0) {
+      return res.status(404).render("error", {
+        title: "Error",
+        error: "No hay pacientes con ese apellido",
+      });
     }
 
-    const record = resultados.find((element) => element._id == id);
+    const recordsFinal = await Records.find({
+      patient: { $in: patientIds },
+    })
+      .populate("patient")
+      .populate("physio");
 
-    if (!record) {
-      return res.status(404).send({ error: "Record no encontrado" });
+    if (recordsFinal.length === 0) {
+      return res.status(404).render("error", {
+        title: "Error",
+        error: "No se encuentra ningún expediente",
+      });
     }
 
-    const rol = req.usuario.rol;
-    const userId = req.usuario.id;
-
-    if (rol === "patient" && id !== userId) {
-      return res.status(403).send({
-        error:"Paciente no autorizado" 
-      })
-    }
-
-    res.status(200).send({ result: record });
+    res.status(200).render("records_list", {
+      title: "Registros Filtrados",
+      result: recordsFinal,
+    });
   } catch (error) {
     console.error(error);
-    res.status(500).send({ error: "Error interno del servidor" });
+    res.status(500).render("error", {
+      title: "Error",
+      error: "Error interno del servidor",
+    });
   }
 });
 
-router.post("/", auth.protegerRuta(['admin', 'physio']), async (req, res) => {
+router.get("/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const record = await Records.find({ patient: id });
+
+    if (!record || record.length === 0) {
+      return res.status(404).render("error", {
+        title: "Error",
+        error: "Registro no encontrado",
+      });
+    }
+
+    const rol = req.usuario?.rol;
+    const userId = req.usuario?.id;
+
+    if (rol === "patient" && id !== userId) {
+      return res.status(403).render("error", {
+        title: "Error",
+        error: "Paciente no autorizado",
+      });
+    }
+
+    res.status(200).render("record_detail", {
+      title: "Detalles del Registro",
+      result: record,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).render("error", {
+      title: "Error",
+      error: "Error interno del servidor",
+    });
+  }
+});
+
+router.post("/", async (req, res) => {
   try {
     const { patient, medicalRecord } = req.body;
 
     if (!patient || !medicalRecord) {
-      return res.status(400).send({
-        error: "Todos los campos básicos del record son requeridos",
+      return res.status(400).render("error", {
+        title: "Error",
+        error: "Todos los campos básicos del registro son requeridos",
       });
     }
 
@@ -108,71 +154,83 @@ router.post("/", auth.protegerRuta(['admin', 'physio']), async (req, res) => {
       medicalRecord,
     });
 
-    const savedRecord=await newRecord.save();
-    res
-      .status(201)
-      .send({ result:savedRecord });
+    const savedRecord = await newRecord.save();
+    res.status(201).render("records_list", {
+      title: "Registro Creado",
+      result: savedRecord,
+    });
   } catch (error) {
     console.error(error);
-    res.status(400).send({ error: "Error al insertar el record" });
+    res.status(400).render("error", {
+      title: "Error",
+      error: "Error al insertar el registro",
+    });
   }
 });
 
-router.post("/:id/appointments", auth.protegerRuta(['admin', 'physio']), async (req, res) => {
+router.post("/:id/appointments", async (req, res) => {
   try {
     const userId = req.params.id;
-
     const { date, physio, diagnosis, treatment, observations } = req.body;
 
-    const result = await Records.findByIdAndUpdate(
+    const result = await Patient.findByIdAndUpdate(
       userId,
       {
         $push: {
           appointments: {
-            date:date,
-            physio:physio,
-            diagnosis:diagnosis,
-            treatment:treatment,
-            observations:observations,
+            date,
+            physio,
+            diagnosis,
+            treatment,
+            observations,
           },
         },
       },
-      { new: true }
+      { new: true, runValidators: true }
     );
 
     if (!result) {
-      res.status(400).send({
-        error: "Error actualizando el record",
+      return res.status(400).render("error", {
+        title: "Error",
+        error: "Error actualizando el registro",
       });
     }
 
-    res.status(200).send({
-      resultado: result,
+    res.status(200).render("record_detail", {
+      title: "Cita Añadida",
+      result,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).send({ error: "Error interno del servidor" });
+    res.status(500).render("error", {
+      title: "Error",
+      error: "Error interno del servidor",
+    });
   }
 });
 
-router.delete("/:id", auth.protegerRuta(['admin', 'physio']), async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
-    const recordId = req.params.id;
-
-    const result = await Records.findByIdAndDelete(recordId);
+    const patientId = req.params.id;
+    const result = await Records.deleteMany({ patient: patientId });
 
     if (!result) {
-      res.status(400).send({
-        error: "Error eliminando el record",
+      return res.status(400).render("error", {
+        title: "Error",
+        error: "Error eliminando el registro",
       });
     }
 
-    res
-      .status(200)
-      .send({ resultado: result });
+    res.status(200).render("records_list", {
+      title: "Registro Eliminado",
+      result:result,
+    });
   } catch (error) {
     console.error(error);
-    res.status(500).send({ error: "Error interno del servidor" });
+    res.status(500).render("error", {
+      title: "Error",
+      error: "Error interno del servidor",
+    });
   }
 });
 
