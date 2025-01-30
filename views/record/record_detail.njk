@@ -22,6 +22,8 @@
     </div>
 
     <h2>Appointments</h2>
+    <a class="btn btn-primary" href="/records/{{ result.patient._id }}/appointments/new" class="button">Add Appointment</a>
+
     {% if result.appointments and result.appointments.length > 0 %}
         <table width="100%">
             <thead>
@@ -44,6 +46,7 @@
                     </tr>
                 {% endfor %}
             </tbody>
+
         </table>
     {% else %}
         <p>No consultations registered.</p>
