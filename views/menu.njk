@@ -1,11 +1,35 @@
-<div class="alert alert-secondary">
-    <a class="btn btn-dark" href="/login">Login</a>
-    <a class="btn btn-dark" href="/patients">Lista de pacientes</a>
-    <a class="btn btn-dark" href="/patients/new">Añadir paciente</a>
-    <a class="btn btn-dark" href="/patients/find">Buscar paciente por apellido</a>
-    <a class="btn btn-dark" href="/physios">Lista de fisios</a>
-    <a class="btn btn-dark" href="/physios/find">Buscar por especialidad</a>
-    <a class="btn btn-dark" href="/records">Lista de records</a>
-    <a class="btn btn-dark" href="/records/new">Registro de records</a>
+<nav class="navbar navbar-expand-lg bg-secondary py-3">
+    <div class="container d-flex justify-content-between align-items-center">
+        <span class="navbar-brand text-light fw-bold fs-4">PhysioCare</span>
 
-</div>
+        <div class="d-flex flex-wrap gap-2">
+            {% if session.user and(session.user.rol == 'admin' or session.user.rol == 'physio') %}
+                <a class="btn btn-dark" href="/patients">Lista de pacientes</a>
+                <a class="btn btn-dark" href="/patients/new">Añadir paciente</a>
+                <a class="btn btn-dark" href="/patients/find">Buscar paciente</a>
+            {% endif %}
+
+            {% if session.user  and (session.user.rol == 'admin'  or session.user.rol == 'physio')%}
+                <a class="btn btn-dark" href="/physios">Lista de fisios</a>
+            {% endif %}
+            {% if session.user and session.user.rol == 'admin' %}
+                <a class="btn btn-dark" href="/physios/find">Buscar fisio</a>
+            {% endif %}
+
+            {% if session.user and session.user.rol == 'patient' %}
+                <a class="btn btn-dark" href="/patients/{{ session.user.id }}">Me</a>
+                <a class="btn btn-dark" href="/records/{{ session.user.id }}">Lista de records</a>
+            {% endif %}
+
+            {% if session.user and(session.user.rol == 'admin' or session.user.rol == 'physio') %}
+                <a class="btn btn-dark" href="/records">Lista de records</a>
+                <a class="btn btn-dark" href="/records/new">Registrar expediente</a>
+            {% endif %}
+        </div>
+
+        <div>
+            <a class="btn btn-outline-light" href="/login/logout">Logout</a>
+            <a class="btn btn-outline-light" href="/login">Login</a>
+        </div>
+    </div>
+</nav>

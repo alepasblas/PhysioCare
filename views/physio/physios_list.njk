@@ -1,4 +1,4 @@
-{% extends "base.njk" %}
+{% extends "../base.njk" %}
 
 {% block titulo %}Physios | Listado{% endblock %}
 
@@ -8,6 +8,7 @@
 
     <table width="100%">
         <a class="btn btn-primary" href="/physios/new">Add physio</a>
+        <br>
         <br>
         <a class="btn btn-primary" href="/physios/find">Buscar por especialidad</a>
 
@@ -20,7 +21,7 @@
                     <a class="btn btn-success" href="/physios/{{ physio.id }}">Ver ficha</a>
                     <a class="btn btn-warning" href="/physios/{{ physio.id }}/edit">Editar</a>
 
-                    <form action="/physio/{{ physio.id }}" method="post" style="display: inline-block;">
+                    <form action="/physios/{{ physio.id }}" method="post" style="display: inline-block;">
                         <input type="hidden" name="_method" value="delete">
                         <button type="submit" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que deseas borrar este fisio?')">
                             Borrar

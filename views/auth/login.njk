@@ -1,0 +1,38 @@
+{% extends "../base.njk" %}
+
+{% block contenido %}
+<h1 class="text-center mt-5">Login</h1>
+
+<div class="container d-flex justify-content-center">
+    <form method="POST" action="/login" class="w-50 border p-4 rounded shadow-sm bg-light">
+        <div class="form-group mb-3">
+            <label for="login" class="form-label">Login:</label>
+            {% if errors.login %}
+                <div class="text-danger mb-2">{{ errors.login }}</div>
+            {% endif %}
+            <input 
+                type="text" 
+                id="login" 
+                name="login" 
+                class="form-control" 
+                value="{{ patient.login or '' }}" 
+                required>
+        </div>
+
+        <div class="form-group mb-4">
+            <label for="password" class="form-label">Password:</label>
+            {% if errors.password %}
+                <div class="text-danger mb-2">{{ errors.password }}</div>
+            {% endif %}
+            <input 
+                type="password" 
+                id="password" 
+                name="password" 
+                class="form-control" 
+                required>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Log In</button>
+    </form>
+</div>
+{% endblock %}

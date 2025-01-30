@@ -1,23 +1,28 @@
-{% extends "base.njk" %}
+{% extends "../base.njk" %}
 
-{% block titulo %}Record | Ficha{% endblock %}
+{% block titulo %}result | Ficha{% endblock %}
 
 {% block contenido %}
 
     <h1>Ficha de expediente</h1>
     <div>
         <p>
-            <strong>Patient:</strong>
-            {{ record.patient.name }}
-        </p>
+            <strong>Name:</strong>
+            {{ result.patient.name }}</p>
         <p>
-            <strong>Medical Record:</strong>
-            {{ record.medicalRecord }}
-        </p>
+            <strong>Surname:</strong>
+            {{ result.patient.surname }}</p>
+
+        <h2>Medical result</h2>
+        {% if result.medicalresult %}
+            <p>{{ result.medicalresult }}</p>
+        {% else %}
+            <p>No medical result available.</p>
+        {% endif %}
     </div>
 
     <h2>Appointments</h2>
-    {% if record.appointments and record.appointments.length > 0 %}
+    {% if result.appointments and result.appointments.length > 0 %}
         <table width="100%">
             <thead>
                 <tr>
@@ -29,9 +34,9 @@
                 </tr>
             </thead>
             <tbody>
-                {% for appointment in record.appointments %}
+                {% for appointment in result.appointments %}
                     <tr>
-                        <td>{{ appointment.date | date("YYYY-MM-DD") }}</td>
+                        <td>{{ appointment.date }}</td>
                         <td>{{ appointment.physio.name }}</td>
                         <td>{{ appointment.diagnosis }}</td>
                         <td>{{ appointment.treatment }}</td>

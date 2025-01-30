@@ -1,4 +1,4 @@
-{% extends "base.njk" %}
+{% extends "../base.njk" %}
 
 {% block titulo %}Patients | Listado{% endblock %}
 
@@ -22,7 +22,7 @@
                     <a class="btn btn-success" href="/patients/{{ patient.id }}">Ver ficha</a>
                     <a class="btn btn-warning" href="/patients/{{ patient.id }}/edit">Editar</a>
 
-                    <form action="/patients/{{ patient.id }}" method="post" style="display: inline-block;">
+                    <form method="POST" action="/patients/{{ patient._id }}" style="display: inline;">
                         <input type="hidden" name="_method" value="delete">
                         <button type="submit" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que deseas borrar este paciente?')">
                             Borrar

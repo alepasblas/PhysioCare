@@ -1,8 +1,9 @@
-{% extends "base.njk" %}
+{% extends "../base.njk" %}
 
 {% block titulo %}Patients | Listado{% endblock %}
 
 {% block contenido %}
+<br>
     <form class="d-flex mb-0" action="/patients/find" method="GET">
 
         <input class="form-control me-2" type="text" name="surname" placeholder="Search">

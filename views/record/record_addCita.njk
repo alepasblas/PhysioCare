@@ -1,0 +1,33 @@
+{% extends "../base.njk" %}
+
+{% block titulo %}Record | Ficha{% endblock %}
+
+{% block contenido %}
+    <h5>Cita Médica</h5>
+    <form method="POST" action="/records/{{ record.patient._id }}/appointments">
+
+        <div class="appointment-item mb-3">
+            <label for="date" class="form-label">Fecha</label>
+            <input type="date" class="form-control" id="date" name="date" required value="{{ appointment.date or '' }}">
+
+            <label for="physio"  class="form-label"></label>
+            <select id="physio" name="physio"  class="form-control" required>
+                <option value="">Fisio:</option>
+                {% for physio in physios %}
+                    <option  class="form-control" value="{{ physio._id }}" {% if appointment.physio == physio._id %}selected{% endif %}>{{ physio.name }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="diagnosis" class="form-label">Diagnóstico</label>
+            <textarea id="diagnosis" class="form-control" name="diagnosis" rows="3" minlength="10" maxlength="500" required>{{ appointment.diagnosis or '' }}</textarea>
+
+            <label for="treatment" class="form-label">Tratamiento</label>
+            <textarea id="treatment" class="form-control" name="treatment" rows="3" required>{{ appointment.treatment or '' }}</textarea>
+
+            <label for="observations" class="form-label">Observaciones</label>
+            <textarea id="observations" class="form-control" name="observations" rows="3">{{ appointment.observations or '' }}</textarea>
+        </div>
+    <button type="submit" class="btn btn-primary">Registrar</button>
+</form>
+
+{% endblock %}

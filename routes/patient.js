@@ -5,6 +5,7 @@ const upload = require(__dirname + '/../utils/uploads.js');
 const router = express.Router();
 const Patient = require("../models/patient");
 const User = require("../models/user"); 
+const { rolesPerm } = require("../middleware/roles");
 
 
 
@@ -18,30 +19,50 @@ const getAllPatients = async () => {
   }
 };
 
-router.get("/new", async (req, res) => {
-  try{
-    res.status(200).render("patient_add", { title: "Añadir paciente" });
+router.delete("/:id",rolesPerm('admin', 'physio'),async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const result = await Patient.findByIdAndDelete(userId);
+
+    if (!result) {
+      console.log("3");
+      return res.status(404).render("error", { title: "Error", error: "Error eliminando contacto" });
+      
+    }
+    
+    res.status(200).redirect("/patients"); 
+    // res.status(200).render("patient/patients_list", { title: "Paciente Eliminado", result:result });
+
   } catch (error) {
     console.error(error);
     res.status(500).render("error", { title: "Error", error: "Error interno del servidor" });
   }
 });
-router.get("/", async (req, res) => {
+
+router.get("/",rolesPerm('admin', 'physio'), async (req, res) => {
   try {
     const resultados = await getAllPatients();
-    console.log("Pacientes encontrados:", resultados);
 
     if (resultados.length === 0) {
       return res.status(404).render("error", { title: "Error", error: "No hay pacientes registrados" });
     }
-    res.status(200).render("patients_list", { title: "Listado de Pacientes", result: resultados });
+    res.status(200).render("patient/patients_list", { title: "Listado de Pacientes", result: resultados });
   } catch (error) {
     console.error(error);
     res.status(500).render("error", { title: "Error", error: "Error interno del servidor" });
   }
 });
 
-router.get("/find", async (req, res) => {
+router.get("/new",rolesPerm('admin', 'physio'), async (req, res) => {
+  try{
+    res.status(200).render("patient/patient_add", { title: "Añadir paciente" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).render("error", { title: "Error", error: "Error interno del servidor" });
+  }
+});
+
+router.get("/find",rolesPerm('admin', 'physio'), async (req, res) => {
   try {
     const resultados = await getAllPatients();
     const { surname } = req.query;
@@ -56,14 +77,16 @@ router.get("/find", async (req, res) => {
         .render("error", { title: "Error", error: "No se encontraron pacientes que coincidan" });
     }
 
-    res.status(200).render("patient_find", { title: "Pacientes Filtrados", result: pacientesFiltrados });
+    res.status(200).render("patient/patient_find", { title: "Pacientes Filtrados", result: pacientesFiltrados });
   } catch (error) {
     console.error("Error interno del servidor:", error.message);
     res.status(500).render("error", { title: "Error", error: "Error interno del servidor" });
   }
 });
 
-router.get("/:id", async (req, res) => {
+
+
+router.get("/:id",rolesPerm('admin', 'physio', 'patient'), async (req, res) => {
   try {
     const idPaciente = req.params.id;
 
@@ -74,29 +97,30 @@ router.get("/:id", async (req, res) => {
       return res.status(404).render("error", { title: "Error", error: "Paciente no encontrado" });
     }
 
-    console.log(req.usuario);
+    console.log(req.user);
 
-    // const rol = req.usuario.rol;
+    const rol = req.user.rol;
+    
 
-    // const userId = req.usuario._id;
-    // console.log(userId);
+    const userId = req.user._id;
+    console.log(userId);
 
  
-    // console.log(`${rol}, ${userId}`);
+    console.log(`${rol}, ${userId}`);
 
 
-    // if (rol === "patient" && idPaciente !== userId) {
-    //   return res.status(403).render("error", { title: "Acceso Denegado", error: "Paciente no autorizado" });
-    // }
+    if (rol === "patient" && idPaciente !== userId) {
+      return res.status(403).render("error", { title: "Acceso Denegado", error: "Paciente no autorizado" });
+    }
 
-    res.status(200).render("patient_detail", { title: `Detalles de ${paciente.name}`, result: paciente });
+    res.status(200).render("patient/patient_detail", { title: `Detalles de ${paciente.name}`, result: paciente });
   } catch (error) {
     console.error(error);
-    res.status(500).render("error", { title: "Error", error: "Error interno del servidor" });
+    res.status(500).render("error", { title: "Error", error: "Error interno del servidor: "+error });
   }
 });
 
-router.get("/:id/edit", async (req, res) => {
+router.get("/:id/edit",rolesPerm('admin', 'physio'), async (req, res) => {
   try {
     const idPaciente = req.params.id;
 
@@ -110,7 +134,7 @@ router.get("/:id/edit", async (req, res) => {
     console.log(req.usuario);
 
 
-    res.status(200).render("patient_edit", { result: paciente });
+    res.status(200).render("patient/patient_edit", { result: paciente });
   } catch (error) {
     console.error(error);
     res.status(500).render("error", { title: "Error", error: "Error interno del servidor" });
@@ -118,7 +142,7 @@ router.get("/:id/edit", async (req, res) => {
 });
 
 
-router.post("/",upload.upload.single('image'),  async (req, res) => {
+router.post("/",rolesPerm('admin', 'physio'),upload.upload.single('image'),  async (req, res) => {
   try {
     const { name, surname, birthDate, address, insuranceNumber,login,  password } = req.body;
 
@@ -126,18 +150,23 @@ router.post("/",upload.upload.single('image'),  async (req, res) => {
       return res.status(400).render("error", { title: "Error", error: "Todos los campos básicos del paciente son requeridos" });
 
     }
-
+    let image = null;
+    if (req.file) {
+        image = `/public/uploads/${req.file.filename}`;
+    }
     const newPatient = new Patient({
       name,
       surname,
       birthDate,
       address,
       insuranceNumber,
+      image,
     });
 
     const savedPatient=await newPatient.save();
 
     const newUser = new User({
+      _id: savedPatient._id,
       login: login,  
       password: password,  
       rol: "patient",
@@ -147,8 +176,9 @@ router.post("/",upload.upload.single('image'),  async (req, res) => {
 
     savedUser._id = savedPatient._id;
 
+    res.status(201).redirect("/patients"); 
 
-    res.status(201).render("patients_list", { title: "Paciente Registrado", result: savedPatient });
+    // res.status(201).render("patient/patients_list", { title: "Paciente Registrado", result: savedPatient });
 
   } catch (error) { 
     console.error(error);
@@ -156,23 +186,24 @@ router.post("/",upload.upload.single('image'),  async (req, res) => {
   }
 });
 
-router.post("/:id", async (req, res) => {
+router.post("/:id",rolesPerm('admin', 'physio'), upload.upload.single('image'), async (req, res) => {
   try {
     const userId = req.params.id;
 
     const { name, surname, birthDate, address, insuranceNumber } = req.body;
+    const data = {};
+
+    const fields = { name, surname, birthDate, address, insuranceNumber };
+
+    for (const name in fields) {
+        if (fields[name]) data[name] = fields[name];
+    }
+    
+    if (req.file) data.image = `/public/uploads/${req.file.filename}`;
+    
 
     const result = await Patient.findByIdAndUpdate(
-      userId,
-      {
-        $set: {
-          name: name,
-          surname: surname,
-          birthDate: birthDate,
-          address: address,
-          insuranceNumber: insuranceNumber,
-        },
-      },
+      userId, data,
       { new: true, 
         runValidators:true
       }
@@ -183,7 +214,7 @@ router.post("/:id", async (req, res) => {
 
     }
 
-    res.status(200).render("patient_detail", { title: "Paciente Actualizado", result });
+    res.status(200).render("patient/patient_detail", { title: "Paciente Actualizado", result });
 
   } catch (error) {
     console.error(error);
@@ -191,23 +222,5 @@ router.post("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id",async (req, res) => {
-  try {
-    const userId = req.params.id;
-
-    const result = await Patient.findByIdAndDelete(userId);
-
-    if (!result) {
-      return res.status(404).render("error", { title: "Error", error: "Error eliminando contacto" });
-
-    }
-
-    res.status(200).render("patients_list", { title: "Paciente Eliminado", result:result });
-
-  } catch (error) {
-    console.error(error);
-    res.status(500).render("error", { title: "Error", error: "Error interno del servidor" });
-  }
-});
 
 module.exports = router;

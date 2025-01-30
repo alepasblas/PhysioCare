@@ -1,12 +1,12 @@
-{% extends "base.njk" %}
+{% extends "../base.njk" %}
 
-{% block titulo %}Physio | Ficha{% endblock %}
+{% block titulo %}Patient | Ficha{% endblock %}
 
 {% block contenido %}
 
     <div class="container mt-5">
-        <h1>Registrar Nuevo Physio</h1>
-        <form action="/physios" method="POST" enctype="multipart/form-data">
+        <h1>Registrar Nuevo Paciente</h1>
+        <form action="/patients" method="POST" enctype="multipart/form-data">
 
             <div class="mb-3">
                 <label for="name" class="form-label">Nombre</label>
@@ -19,13 +19,18 @@
             </div>
 
             <div class="mb-3">
-                <label for="specialty" class="form-label">Specialty</label>
-                <input type="text" id="specialty" name="specialty" class="form-control" required="required">
+                <label for="birthDate" class="form-label">Fecha de Nacimiento</label>
+                <input type="date" id="birthDate" name="birthDate" class="form-control" required="required">
             </div>
 
             <div class="mb-3">
-                <label for="licenseNumber" class="form-label">License Number</label>
-                <input type="text" id="licenseNumber" name="licenseNumber" class="form-control" pattern="^[a-zA-Z0-9]{8}$">
+                <label for="address" class="form-label">Dirección</label>
+                <input type="text" id="address" name="address" class="form-control" maxlength="100">
+            </div>
+
+            <div class="mb-3">
+                <label for="insuranceNumber" class="form-label">Número de Seguro</label>
+                <input type="text" id="insuranceNumber" name="insuranceNumber" class="form-control" required="required" pattern="[a-zA-Z0-9]{9}">
             </div>
 
             <div class="mb-3">

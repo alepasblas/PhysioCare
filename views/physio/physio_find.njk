@@ -1,8 +1,10 @@
-{% extends "base.njk" %}
+{% extends "../base.njk" %}
 
 {% block titulo %}Physios | Listado{% endblock %}
 
 {% block contenido %}
+    <br>
+
     <form class="d-flex mb-0" action="/physios/find" method="GET">
 
         <input class="form-control me-2" type="text" name="specialty" placeholder="Search">

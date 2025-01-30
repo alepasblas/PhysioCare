@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const Records = require("../models/record");
 const Patient = require("../models/patient");
+const Physios = require("../models/physio");
+const { rolesPerm } = require("../middleware/roles");
 
 const getAllRecords = async () => {
   try {
@@ -13,9 +15,9 @@ const getAllRecords = async () => {
   }
 };
 
-router.get('/new', async (req, res) => {
+router.get('/new',rolesPerm('admin', 'physio'),  async (req, res) => {
   const patients = await Patient.find().select('_id name surname'); 
-  res.render('record_add', { patients });
+  res.render('record/record_add', { patients });
 });
 
 // router.post('/new', async (req, res) => {
@@ -43,7 +45,7 @@ router.get('/new', async (req, res) => {
 //   }
 // });
 
-router.get("/", async (req, res) => {
+router.get("/" ,rolesPerm('admin', 'physio'), async (req, res) => {
   try {
     const resultados = await getAllRecords();
     if (resultados.length === 0) {
@@ -52,7 +54,7 @@ router.get("/", async (req, res) => {
         error: "No hay registros registrados",
       });
     }
-    res.status(200).render("records_list", {
+    res.status(200).render("record/records_list", {
       title: "Listado de Registros",
       result: resultados,
     });
@@ -65,7 +67,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/find", async (req, res) => {
+router.get("/find",rolesPerm('admin', 'physio'), async (req, res) => {
   const { surname } = req.query;
   try {
     const patientIds = await Patient.find({ surname }).select("_id");
@@ -90,7 +92,7 @@ router.get("/find", async (req, res) => {
       });
     }
 
-    res.status(200).render("records_list", {
+    res.status(200).render("record/records_list", {
       title: "Registros Filtrados",
       result: recordsFinal,
     });
@@ -103,10 +105,14 @@ router.get("/find", async (req, res) => {
   }
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id",rolesPerm('admin', 'physio', 'patient'), async (req, res) => {
   try {
     const id = req.params.id;
-    const record = await Records.find({ patient: id });
+    const record = await Records.findOne({ patient: id })
+    .populate('patient', 'name surname')
+    .populate('appointments.physio', 'name');;
+
+    console.log(`${record.patient.name} ${record.patient.surname}`);
 
     if (!record || record.length === 0) {
       return res.status(404).render("error", {
@@ -125,7 +131,7 @@ router.get("/:id", async (req, res) => {
       });
     }
 
-    res.status(200).render("record_detail", {
+    res.status(200).render("record/record_detail", {
       title: "Detalles del Registro",
       result: record,
     });
@@ -138,24 +144,66 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
-  try {
-    const { patient, medicalRecord } = req.body;
+router.get("/:id/appointments/new",rolesPerm('admin', 'physio'), async (req, res) => {
 
-    if (!patient || !medicalRecord) {
+  const id = req.params.id;
+
+  try {
+      const record = await Records.findOne({ patient: id }).populate("patient");
+      if (!record) {
+          return res.status(404).render("error", {
+              title: "Record Not Found",
+              error: `No record found with ID: ${id}`,
+              code: 404
+          });
+      }
+
+      const physios = await Physios.find();
+
+      res.render("record/record_addCita", {
+          title: "Add Appointment",
+          record,
+          physios
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).render("error", {
+        title: "Error",
+        error: "Error interno del servidor",
+      });
+    }
+  });
+
+router.post("/",rolesPerm('admin', 'physio'),async (req, res) => {
+  try {
+    const { patientId, medicalRecord } = req.body;
+    console.log("Received body:", req.body);
+
+
+    if (!patientId || !medicalRecord) {
       return res.status(400).render("error", {
         title: "Error",
         error: "Todos los campos básicos del registro son requeridos",
       });
     }
 
+    const patient = await Patient.findById(patientId);
+    console.log(patient);
+    if (!patient) {
+        return res.status(404).render('pages/error', {
+            title: "Patient Not Found",
+            error: `Patient not found with ID: ${patientId}`
+          });
+    }
     const newRecord = new Records({
-      patient,
+      patient: patient._id,
       medicalRecord,
+      appointments: []
+
     });
 
     const savedRecord = await newRecord.save();
-    res.status(201).render("records_list", {
+    res.status(201).render("record/records_list", {
       title: "Registro Creado",
       result: savedRecord,
     });
@@ -168,26 +216,22 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.post("/:id/appointments", async (req, res) => {
+router.post("/:id/appointments",rolesPerm('admin', 'physio'), async (req, res) => {
   try {
     const userId = req.params.id;
     const { date, physio, diagnosis, treatment, observations } = req.body;
 
-    const result = await Patient.findByIdAndUpdate(
-      userId,
-      {
-        $push: {
-          appointments: {
-            date,
-            physio,
-            diagnosis,
-            treatment,
-            observations,
-          },
-        },
-      },
-      { new: true, runValidators: true }
-    );
+    const appointment = {
+      date,
+      physio,
+      diagnosis,
+      treatment,
+      observations,
+  };
+  
+  console.log(appointment); 
+    const result = await Records.findOne({ patient: userId });
+
 
     if (!result) {
       return res.status(400).render("error", {
@@ -196,10 +240,17 @@ router.post("/:id/appointments", async (req, res) => {
       });
     }
 
-    res.status(200).render("record_detail", {
-      title: "Cita Añadida",
-      result,
-    });
+    result.appointments.push(appointment);
+    await result.save();
+
+    console.log(result);
+
+    res.status(200).redirect("/records"); 
+
+    // res.status(200).render("record/record_detail", {
+    //   title: "Cita Añadida",
+    //   result,
+    // });
   } catch (error) {
     console.error(error);
     res.status(500).render("error", {
@@ -209,7 +260,7 @@ router.post("/:id/appointments", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id",rolesPerm('admin', 'physio'), async (req, res) => {
   try {
     const patientId = req.params.id;
     const result = await Records.deleteMany({ patient: patientId });
@@ -221,10 +272,12 @@ router.delete("/:id", async (req, res) => {
       });
     }
 
-    res.status(200).render("records_list", {
-      title: "Registro Eliminado",
-      result:result,
-    });
+    res.status(200).redirect("/records"); 
+
+    // res.status(200).render("record/records_list", {
+    //   title: "Registro Eliminado",
+    //   result:result,
+    // });
   } catch (error) {
     console.error(error);
     res.status(500).render("error", {

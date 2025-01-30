@@ -1,4 +1,4 @@
-{% extends "base.njk" %}
+{% extends "../base.njk" %}
 
 {% block titulo %}Patient | Ficha{% endblock %}
 
@@ -6,6 +6,8 @@
 
     <h1>Ficha de paciente</h1>
     <div>
+        <strong>Image:</strong>
+        <td><img src="{{ result.image }}" alt="Physio Image" width="100px"/></td>
         <p>
             <strong>Name:</strong>
             {{ result.name }}</p>

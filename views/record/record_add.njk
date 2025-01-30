@@ -1,0 +1,27 @@
+{% extends "../base.njk" %}
+
+{% block titulo %}Record | Ficha{% endblock %}
+
+{% block contenido %}
+    <div class="container mt-5">
+        <h1>Registrar Nuevo Expediente Médico</h1>
+        <form action="/records" method="POST" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="patient" class="form-label">Paciente</label>
+                <select id="patient" name="patientId" class="form-select" required="required">
+                    {% for patient in patients %}
+                        <option value="{{ patient._id }}">{{ patient.name }}
+                            {{ patient.surname }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="medicalRecord" class="form-label">Historial Médico</label>
+                <textarea id="medicalRecord" name="medicalRecord" class="form-control" maxlength="1000" placeholder="Ingrese información del historial médico del paciente"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Registrar</button>
+        </form>
+    </div>
+{% endblock %}

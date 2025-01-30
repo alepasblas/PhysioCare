@@ -3,14 +3,14 @@ const mongoose = require('mongoose');
 const userSchema = new mongoose.Schema({
     login: {
         type: String,
-        required: true,
+        required: [true, "The login's name is required"], 
+        minlength: [4, "The login must have at least 4 characters"],
         unique: true,
-        minlength: 4
     },
     password: {
         type: String,
-        required: true,
-        minlength: 7
+        required: [true, "The password is required"], 
+        minlength: [7, "The password must have at least 7 characters"]
     },
     rol: {
         type: String,
