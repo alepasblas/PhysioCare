@@ -1,43 +1,42 @@
 const mongoose = require('mongoose');
 
 const consSchema = new mongoose.Schema({
-    date:{
+    date: {
         type: Date,
-        required: [true, "The appointment date is required"]
+        required: [true, "La fecha de la cita es obligatoria"]
     },
-    physio:{
+    physio: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'physios',
-        required: [true, "A physio is required"]
+        required: [true, "Se requiere un fisioterapeuta"]
     },
-    diagnosis:{
+    diagnosis: {
         type: String,
-        required: [true, "The diagnosis is required"],
-        minlength: [10, "The diagnosis must have at least 10 characters"],
-        maxlength: [500, "The diagnosis cannot exceed 500 characters"]
+        required: [true, "El diagnóstico es obligatorio"],
+        minlength: [10, "El diagnóstico debe tener al menos 10 caracteres"],
+        maxlength: [500, "El diagnóstico no puede exceder los 500 caracteres"]
     },
-    treatment:{
+    treatment: {
         type: String,
-        required: [true, "The treatment is required"]
+        required: [true, "El tratamiento es obligatorio"]
     },
-    observations:{
+    observations: {
         type: String,
-        maxlength: [500, "Observations cannot exceed 500 characters"]
+        maxlength: [500, "Las observaciones no pueden exceder los 500 caracteres"]
     }
-  });
+});
 
 let recordSchema = new mongoose.Schema({
     patient: {
         type: mongoose.Schema.Types.ObjectId,
-        required: [true, "The patient reference is required"],
+        required: [true, "La referencia del paciente es obligatoria"],
         ref: 'patients'
     },
     medicalRecord: {
         type: String,
-        maxlength: [1000, "The medical record cannot exceed 1000 characters"]
+        maxlength: [1000, "El historial médico no puede exceder los 1000 caracteres"]
     },
     appointments: [consSchema],
-
 });
 
 let Record = mongoose.model('records', recordSchema);

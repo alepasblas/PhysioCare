@@ -13,6 +13,7 @@
                 <a class="btn btn-dark" href="/physios">Lista de fisios</a>
             {% endif %}
             {% if session.user and session.user.rol == 'admin' %}
+                <a class="btn btn-dark" href="/physios/new">Añadir fisio</a>
                 <a class="btn btn-dark" href="/physios/find">Buscar fisio</a>
             {% endif %}
 

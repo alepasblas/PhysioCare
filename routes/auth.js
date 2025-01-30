@@ -41,23 +41,6 @@ router.post("/", async (req, res) => {
             error: "Error interno del servidor" 
         });
     }
-
-    // if (existeUsuario) {
-
-    //     if (user.password !== password) {
-    //         return res.render('/', {
-    //             title: "Login - Error",
-    //         });
-    //     }
-    //     req.session.usuario = { login: existeUsuario.login, rol: existeUsuario.rol, id: existeUsuario._id };
-    //     res.render('index');
-    //     console.log("Usuario logueado con rol: " + req.session.rol);
-
-    // } else {
-    //     res.render('auth/login', { 
-    //         error: "Usuario o contraseña incorrectos" 
-    //     });
-    // }
 });
 
 

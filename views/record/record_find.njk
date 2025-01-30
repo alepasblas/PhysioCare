@@ -1,13 +1,17 @@
 {% extends "../base.njk" %}
 
-{% block titulo %}Expedientes médicos | Listado{% endblock %}
+{% block titulo %}Record | Listado{% endblock %}
 
 {% block contenido %}
+    <br>
+    <form class="d-flex mb-0" action="/records/findRecord" method="GET">
 
-    <h1>Listado de expedientes médicos</h1>
+        <input class="form-control me-2" type="text" name="surname" placeholder="Search">
+        <button type="submit" class="btn btn-dark">Buscar</button>
 
+    </form>
+    <br>
     <table width="100%">
-        <a class="btn btn-primary" href="/records/new">Add new</a>
 
         <thead>
             <tr>
@@ -40,4 +44,4 @@
         </tbody>
     </table>
 
-{% endblock %}
+    {%endblock%}

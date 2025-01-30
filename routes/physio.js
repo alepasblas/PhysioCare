@@ -77,10 +77,8 @@ router.get("/:id",rolesPerm('admin', 'physio', 'patient'), async (req, res) => {
 });
 
 router.post("/",rolesPerm('admin'),upload.upload.single('image'), async (req, res) => {
+  const { name, surname, specialty, licenseNumber, login, password } = req.body;
   try {
-    const { name, surname, specialty, licenseNumber, login, password } = req.body;
-
-    console.log(req.body); // Verificar qué datos se envían
 
     if (!name || !surname || !specialty || !licenseNumber) {
       return res.status(400).render("error", { title: "Error", error: "Todos los campos básicos del fisioterapeuta son requeridos" });
@@ -114,8 +112,35 @@ router.post("/",rolesPerm('admin'),upload.upload.single('image'), async (req, re
 
     // res.status(201).render("physio/physios_list", { title: "Fisioterapeuta Registrado", result: savedPhysio });
   } catch (error) {
-    console.error(error);
-    res.status(400).render("error", { title: "Error", error: "Error al insertar el fisioterapeuta" });
+    const errors = { general: "Error al registrar el fisioterapeuta" };
+
+        if (error.name === 'ValidationError' || error.code === 11000) {
+            if (error.errors) {
+                if (error.errors.name) errors.name = error.errors.name.message;
+                if (error.errors.surname) errors.surname = error.errors.surname.message;
+                if (error.errors.specialty) errors.specialty = error.errors.specialty.message;
+                if (error.errors.licenseNumber) errors.licenseNumber = error.errors.licenseNumber.message;
+                if (error.errors.login) errors.login = error.errors.login.message;
+                if (error.errors.password) errors.password = error.errors.password.message;
+            }
+
+            if (error.code === 11000) {
+                if (error.message.includes('licenseNumber')) {
+                    errors.licenseNumber = "El número de licencia debe ser único.";
+                }
+                if (error.message.includes('login')) {
+                    errors.login = "EL login debe ser único.";
+                }
+            }
+
+            return res.render('physio/physio_add', {
+                title: "Error al añadir fisioterapeuta",
+                physio: {  name, surname, specialty, licenseNumber, login, password },
+                errors
+            });
+        }
+
+    res.status(400).render("error", { title: "Error", error: mensaje });
   }
 });
 
@@ -143,10 +168,10 @@ router.get("/:id/edit", rolesPerm('admin'),async (req, res) => {
 
 
 router.post("/:id", rolesPerm('admin'), upload.upload.single('image'), async (req, res) => {
+  const { name, surname, specialty, licenseNumber } = req.body;
+  const userId = req.params.id;
   try {
-    const userId = req.params.id;
 
-    const { name, surname, specialty, licenseNumber } = req.body;
     const data = {};
 
     const fields = { name, surname, specialty, licenseNumber};
@@ -170,8 +195,25 @@ router.post("/:id", rolesPerm('admin'), upload.upload.single('image'), async (re
 
     // res.status(200).render("physio/physios_list", { title: "Fisioterapeuta Actualizado", result });
   } catch (error) {
-    console.error(error);
-    res.status(500).render("error", { title: "Error", error: "Error interno del servidor" });
+    const errors = { general: "Error al modificar el fisio" };
+
+        if (error.name === 'ValidationError' || error.code === 11000) {
+            if (error.errors) {
+                if (error.errors.name) errors.name = error.errors.name.message;
+                if (error.errors.surname) errors.surname = error.errors.surname.message;
+                if (error.errors.specialty) errors.specialty = error.errors.specialty.message;
+                if (error.errors.licenseNumber) errors.licenseNumber = error.errors.licenseNumber.message;
+            }
+
+            if (error.code === 11000) errors.licenseNumber = "El número de licencia debe ser único.";
+
+            return res.render('physio/physios_edit', {
+                title: "Error al editar fisioterapeuta",
+                physio: { _id: userId, name, surname, specialty, licenseNumber  },
+                errors
+            });
+        }
+    res.status(500).render("error", { title: "Error", error: mensaje });
   }
 });
 

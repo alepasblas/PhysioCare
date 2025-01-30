@@ -7,32 +7,32 @@
     <h1>Ficha de expediente</h1>
     <div>
         <p>
-            <strong>Name:</strong>
+            <strong>Nombre:</strong>
             {{ result.patient.name }}</p>
         <p>
-            <strong>Surname:</strong>
+            <strong>Apellido:</strong>
             {{ result.patient.surname }}</p>
 
-        <h2>Medical result</h2>
+        <h2>Resultado medico</h2>
         {% if result.medicalresult %}
             <p>{{ result.medicalresult }}</p>
         {% else %}
-            <p>No medical result available.</p>
+            <p>No hay resultados medicos.</p>
         {% endif %}
     </div>
 
-    <h2>Appointments</h2>
-    <a class="btn btn-primary" href="/records/{{ result.patient._id }}/appointments/new" class="button">Add Appointment</a>
+    <h2>Citas</h2>
+    <a class="btn btn-primary" href="/records/{{ result.patient._id }}/appointments/new" class="button">Añadir cita</a>
 
     {% if result.appointments and result.appointments.length > 0 %}
         <table width="100%">
             <thead>
                 <tr>
-                    <th>Date</th>
-                    <th>Physio</th>
-                    <th>Diagnosis</th>
-                    <th>Treatment</th>
-                    <th>Observations</th>
+                    <th>Fecha</th>
+                    <th>Fisio</th>
+                    <th>Diagnóstico</th>
+                    <th>Tratamiento</th>
+                    <th>Observaciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -49,7 +49,7 @@
 
         </table>
     {% else %}
-        <p>No consultations registered.</p>
+        <p>No hay consultas.</p>
     {% endif %}
 
 {% endblock %}

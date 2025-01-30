@@ -143,8 +143,8 @@ router.get("/:id/edit",rolesPerm('admin', 'physio'), async (req, res) => {
 
 
 router.post("/",rolesPerm('admin', 'physio'),upload.upload.single('image'),  async (req, res) => {
+  const { name, surname, birthDate, address, insuranceNumber,login,  password } = req.body;
   try {
-    const { name, surname, birthDate, address, insuranceNumber,login,  password } = req.body;
 
     if (!name || !surname || !birthDate || !address || !insuranceNumber) {
       return res.status(400).render("error", { title: "Error", error: "Todos los campos básicos del paciente son requeridos" });
@@ -181,16 +181,43 @@ router.post("/",rolesPerm('admin', 'physio'),upload.upload.single('image'),  asy
     // res.status(201).render("patient/patients_list", { title: "Paciente Registrado", result: savedPatient });
 
   } catch (error) { 
-    console.error(error);
+    const errors = { general: "Error al crear el paciente" };
+
+      if (error.name === 'ValidationError' || error.code === 11000) {
+        if (error.errors) {
+            if (error.errors.name) errors.name = error.errors.name.message;
+            if (error.errors.surname) errors.surname = error.errors.surname.message;
+            if (error.errors.birthDate) errors.birthDate = error.errors.birthDate.message;
+            if (error.errors.insuranceNumber) errors.insuranceNumber = error.errors.insuranceNumber.message;
+            if (error.errors.address) errors.address = error.errors.address.message;
+            if (error.errors.login) errors.login = error.errors.login.message;
+            if (error.errors.password) errors.password = error.errors.password.message;
+        }
+
+        if (error.code === 11000) {
+            if (error.message.includes('insuranceNumber')) {
+                errors.insuranceNumber = "El numero de seguro tiene que ser unico.";
+            }
+            if (error.message.includes('login')) {
+                errors.login = "El login tiene que ser unico.";
+            }
+        }
+
+        return res.render('patient/patient_add', {
+            title: "Error al añadir paciente",
+            patient: { name, surname, birthDate, address, insuranceNumber, login },
+            errors
+        });
+      }
     res.status(400).render("error", { title: "Error", error: "Error al insertar el paciente" });
   }
 });
 
 router.post("/:id",rolesPerm('admin', 'physio'), upload.upload.single('image'), async (req, res) => {
+  const { name, surname, birthDate, address, insuranceNumber } = req.body;
+  const userId = req.params.id;
   try {
-    const userId = req.params.id;
 
-    const { name, surname, birthDate, address, insuranceNumber } = req.body;
     const data = {};
 
     const fields = { name, surname, birthDate, address, insuranceNumber };
@@ -217,7 +244,24 @@ router.post("/:id",rolesPerm('admin', 'physio'), upload.upload.single('image'), 
     res.status(200).render("patient/patient_detail", { title: "Paciente Actualizado", result });
 
   } catch (error) {
-    console.error(error);
+    const errors = { general: "Error al modificar el paciente." };
+    if (error.name === 'ValidationError' || error.code === 11000) {
+      if (error.errors) {
+          if (error.errors.name) errors.name = error.errors.name.message;
+          if (error.errors.surname) errors.surname = error.errors.surname.message;
+          if (error.errors.birthDate) errors.birthDate = error.errors.birthDate.message;
+          if (error.errors.insuranceNumber) errors.insuranceNumber = error.errors.insuranceNumber.message;
+          if (error.errors.address) errors.address = error.errors.address.message;
+      }
+
+      if (error.code === 11000) errors.insuranceNumber = "El numero de seguro tiene que ser unico.";
+
+      return res.render('patient/patient_edit', {
+          title: "Error al editar paciente",
+          patient: { _id: userId, name, surname, birthDate, address, insuranceNumber },
+          errors
+      });
+   }
     res.status(500).render("error", { title: "Error", error: "Error interno del servidor" });
   }
 });

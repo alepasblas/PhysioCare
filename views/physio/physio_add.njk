@@ -10,22 +10,41 @@
 
             <div class="mb-3">
                 <label for="name" class="form-label">Nombre</label>
-                <input type="text" id="name" name="name" class="form-control" required="required" minlength="2" maxlength="50">
+                {% if errors.name %}
+                    <p class="text-danger">{{ errors.name }}</p>
+                {% endif %}
+                <input type="text" id="name" name="name" class="form-control" required="required">
             </div>
 
             <div class="mb-3">
                 <label for="surname" class="form-label">Apellido</label>
-                <input type="text" id="surname" name="surname" class="form-control" required="required" minlength="2" maxlength="50">
+                {% if errors.surname %}
+                    <p class="text-danger">{{ errors.surname }}</p>
+                {% endif %}
+                <input type="text" id="surname" name="surname" class="form-control" required="required">
             </div>
 
             <div class="mb-3">
-                <label for="specialty" class="form-label">Specialty</label>
-                <input type="text" id="specialty" name="specialty" class="form-control" required="required">
-            </div>
+                <label for="specialty" class="form-label">Especialidad</label>
+                {% if errors.specialty %}
+                    <p class="text-danger">{{ errors.specialty }}</p>
+                {% endif %}
+                <select id="specialty" name="specialty" class="form-control" required="required">
+                    <option value="" disabled="disabled" selected="selected">Seleccione una especialidad</option>
+                    <option value="Sports">Deportiva</option>
+                    <option value="Neurological" >Neurológica</option>
+                    <option value="Pediatric" >Pediátrica</option>
+                    <option value="Geriatric" >Geriátrica</option>
+                    <option value="Oncological">Oncológica</option>
+                </select>          
+         </div>
 
             <div class="mb-3">
                 <label for="licenseNumber" class="form-label">License Number</label>
-                <input type="text" id="licenseNumber" name="licenseNumber" class="form-control" pattern="^[a-zA-Z0-9]{8}$">
+                {% if errors.licenseNumber %}
+                    <p class="text-danger">{{ errors.licenseNumber }}</p>
+                {% endif %}
+                <input type="text" id="licenseNumber" name="licenseNumber" class="form-control" >
             </div>
 
             <div class="mb-3">
@@ -35,12 +54,18 @@
 
             <div class="mb-3">
                 <label for="login" class="form-label">Login</label>
+                {% if errors.login %}
+                    <p class="text-danger">{{ errors.login }}</p>
+                {% endif %}
                 <input type="text" id="login" name="login" class="form-control" required="required">
             </div>
 
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
-                <input type="text" id="password" name="password" class="form-control" required="required" minlength="7">
+                {% if errors.password %}
+                    <p class="text-danger">{{ errors.password }}</p>
+                {% endif %}
+                <input type="text" id="password" name="password" class="form-control" required="required" >
             </div>
 
             <button type="submit" class="btn btn-primary">Registrar</button>

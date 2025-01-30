@@ -8,8 +8,8 @@ const rolesPerm = (...rolesPerm) => {
 
         if (rolesPerm.length > 0 && !rolesPerm.includes(user.rol)) {
             return res.status(403).render('error', {
-                title: "Forbidden",
-                error: "Forbidden: Insufficient role privileges.",
+                title: "Error",
+                error: "Error: No tienes los permisos necesarios.",
                 code: 403
             });
         }

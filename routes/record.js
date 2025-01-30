@@ -37,7 +37,7 @@ router.get("/new", rolesPerm("admin", "physio"), async (req, res) => {
       patients,
     });
   } catch (error) {
-    console.error("Error fetching patients:", error);
+    console.error( error);
     res
       .status(500)
       .render("error", { title: "Error", error: "Error al obtener pacientes" });
@@ -151,16 +151,15 @@ router.get("/:id/appointments/new",rolesPerm('admin', 'physio'), async (req, res
       const record = await Records.findOne({ patient: id }).populate("patient");
       if (!record) {
           return res.status(404).render("error", {
-              title: "Record Not Found",
-              error: `No record found with ID: ${id}`,
-              code: 404
+              title: "No se encontró el registro",
+              error: `No se encontro registro con id: ${id}`,
           });
       }
 
       const physios = await Physios.find();
 
       res.render("record/record_addCita", {
-          title: "Add Appointment",
+          title: "Añadir cita",
           record,
           physios
       });
@@ -190,8 +189,8 @@ router.post("/",rolesPerm('admin', 'physio'),async (req, res) => {
 
     if (!patient) {
         return res.status(404).render('error', {
-            title: "Patient Not Found",
-            error: `Patient not found with ID: ${patientId}`
+            title: "Paciente no encontrado",
+            error: `Paciente no encontrado con ID: ${patientId}`
           });
     }
     const newRecord = new Records({
