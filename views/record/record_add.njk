@@ -5,18 +5,27 @@
 {% block contenido %}
     <div class="container mt-5">
         <h1>Registrar Nuevo Expediente Médico</h1>
-        <form action="/records" method="POST" enctype="multipart/form-data">
+        <form action="/records" method="POST" >
             <div class="mb-3">
-                <label for="patient" class="form-label">Paciente</label>
-                <select id="patient" name="patientId" class="form-select" required="required">
-                    {% for patient in patients %}
-                        <option value="{{ patient._id }}">{{ patient.name }}
-                            {{ patient.surname }}</option>
-                    {% endfor %}
+                <label for="patientId" class="form-label">Paciente</label>
+                <select id="patientId" name="patientId" class="form-select" required>
+                     {% if not patients.length %}
+                        <option value="" selected>No hay pacientes sin registros</option>
+                    {% else %}
+                        <option value="">Selecciona un paciente</option>
+                        {% for patient in patients %}
+                            <option value="{{ patient._id }}" 
+                                {% if patientId and patient._id == patientId %}selected{% endif %}>
+                                {{ patient.name }} {{ patient.surname }}
+                            </option>
+                        {% endfor %}
+                    {% endif %}
                 </select>
+            {% if patients.length and patientId %}
+                <input type="hidden" name="patientId" value="{{ patientId }}">
+            {% endif %}
             </div>
             
-
             <div class="mb-3">
                 <label for="medicalRecord" class="form-label">Historial Médico</label>
                 <textarea id="medicalRecord" name="medicalRecord" class="form-control" maxlength="1000" placeholder="Ingrese información del historial médico del paciente"></textarea>

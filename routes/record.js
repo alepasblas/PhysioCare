@@ -14,36 +14,35 @@ const getAllRecords = async () => {
     throw new Error("Error al obtener los records");
   }
 };
+router.get("/new", rolesPerm("admin", "physio"), async (req, res) => {
+  try {
+    const { patientId } = req.query;
 
-router.get('/new',rolesPerm('admin', 'physio'),  async (req, res) => {
-  const patients = await Patient.find().select('_id name surname'); 
-  res.render('record/record_add', { patients });
+    const patients = await Patient.aggregate([
+      {
+        $lookup: {
+          from: "records",
+          localField: "_id",
+          foreignField: "patient",
+          as: "record",
+        },
+      },
+      {
+        $match: { record: { $size: 0 } },
+      },
+    ]);
+
+    res.render("record/record_add", {
+      patientId: patientId,
+      patients,
+    });
+  } catch (error) {
+    console.error("Error fetching patients:", error);
+    res
+      .status(500)
+      .render("error", { title: "Error", error: "Error al obtener pacientes" });
+  }
 });
-
-// router.post('/new', async (req, res) => {
-//   try {
-//       const { patient, medicalRecord, appointment} = req.body;
-
-//       const newRecord = new Record({
-//           patient,
-//           medicalRecord,
-//           appointments: [
-//             {
-//                 date: appointment.date,
-//                 diagnosis: appointment.diagnosis,
-//                 treatment: appointment.treatment,
-//                 observations: appointment.observations,
-//             },
-//         ],
-//       });
-
-//       await newRecord.save();
-//       res.redirect('/records');
-//   } catch (error) {
-//       console.error(error);
-//       res.status(500).send('Error al registrar el expediente médico');
-//   }
-// });
 
 router.get("/" ,rolesPerm('admin', 'physio'), async (req, res) => {
   try {
@@ -177,20 +176,20 @@ router.get("/:id/appointments/new",rolesPerm('admin', 'physio'), async (req, res
 router.post("/",rolesPerm('admin', 'physio'),async (req, res) => {
   try {
     const { patientId, medicalRecord } = req.body;
-    console.log("Received body:", req.body);
 
+    console.log(patientId, medicalRecord);
 
-    if (!patientId || !medicalRecord) {
+    if (!patientId) {
       return res.status(400).render("error", {
         title: "Error",
-        error: "Todos los campos básicos del registro son requeridos",
+        error: "El id es necesario",
       });
     }
 
     const patient = await Patient.findById(patientId);
-    console.log(patient);
+
     if (!patient) {
-        return res.status(404).render('pages/error', {
+        return res.status(404).render('error', {
             title: "Patient Not Found",
             error: `Patient not found with ID: ${patientId}`
           });
@@ -202,11 +201,13 @@ router.post("/",rolesPerm('admin', 'physio'),async (req, res) => {
 
     });
 
-    const savedRecord = await newRecord.save();
-    res.status(201).render("record/records_list", {
-      title: "Registro Creado",
-      result: savedRecord,
-    });
+    await newRecord.save();
+
+    res.status(201).redirect("/records"); 
+    // res.status(201).render("record/records_list", {
+    //   title: "Registro Creado",
+    //   result: savedRecord,
+    // });
   } catch (error) {
     console.error(error);
     res.status(400).render("error", {
