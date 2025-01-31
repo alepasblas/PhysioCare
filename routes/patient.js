@@ -102,14 +102,14 @@ router.get("/:id",rolesPerm('admin', 'physio', 'patient'), async (req, res) => {
     const rol = req.user.rol;
     
 
-    const userId = req.user._id;
+    const userId = req.user.id;
     console.log(userId);
 
  
     console.log(`${rol}, ${userId}`);
 
 
-    if (rol === "patient" && idPaciente !== userId) {
+    if (idPaciente !== userId) {
       return res.status(403).render("error", { title: "Acceso Denegado", error: "Paciente no autorizado" });
     }
 
