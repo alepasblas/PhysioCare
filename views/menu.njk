@@ -23,7 +23,7 @@
             {% endif %}
 
             {% if session.user and(session.user.rol == 'admin' or session.user.rol == 'physio') %}
-                <a class="btn btn-dark" href="/records">Lista de records</a>
+                <a class="btn btn-dark" href="/records">Lista de expedientes</a>
                 <a class="btn btn-dark" href="/records/new">Registrar expediente</a>
             {% endif %}
         </div>
