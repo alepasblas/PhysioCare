@@ -27,7 +27,7 @@ router.post("/", async (req, res) => {
                 rol: existeUsuario.rol,
             };
 
-            return res.redirect("/patients");
+            return res.redirect("/index");
         }
 
         res.render("error", { 

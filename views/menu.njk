@@ -29,8 +29,11 @@
         </div>
 
         <div>
+            {% if session.user %}
             <a class="btn btn-outline-light" href="/login/logout">Logout</a>
+            {% else %}
             <a class="btn btn-outline-light" href="/login">Login</a>
+            {% endif %}
         </div>
     </div>
 </nav>

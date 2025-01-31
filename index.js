@@ -68,8 +68,12 @@ app.use((req, res, next) => {
   next();
 });
 app.get("/", (req, res) => {
-  res.redirect("/login");
+  res.redirect("/index");
 });
+app.get("/index", (req, res) => {
+  res.render('index', { 
+    title: "Index" 
+});});
 
 let rol = (rol) => {
   return (req, res, next) => {
